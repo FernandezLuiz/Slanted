@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Message Design Framework — Slanted Publishers</title>
+<style>
+/* ── FONT DECLARATIONS ────────────────────── */
+@font-face {
+  font-family: 'Founders Grotesk';
+  src: url('fonts/FoundersGrotesk-Regular.woff2') format('woff2'),
+       url('fonts/FoundersGrotesk-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Founders Grotesk';
+  src: url('fonts/FoundersGrotesk-Medium.woff2') format('woff2'),
+       url('fonts/FoundersGrotesk-Medium.woff') format('woff');
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Founders Grotesk';
+  src: url('fonts/FoundersGrotesk-Bold.woff2') format('woff2'),
+       url('fonts/FoundersGrotesk-Bold.woff') format('woff');
+  font-weight: 800;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Baskerville';
+  src: url('fonts/Baskerville-Regular.woff2') format('woff2'),
+       url('fonts/Baskerville-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Baskerville';
+  src: url('fonts/Baskerville-Italic.woff2') format('woff2'),
+       url('fonts/Baskerville-Italic.woff') format('woff');
+  font-weight: 400;
+  font-style: italic;
+}
+
+:root {
+  --cobalt: #0033A0;
+  --cobalt-mid: #0040c8;
+  --cobalt-dim: rgba(0,51,160,0.08);
+  --white: #ffffff;
+  --off: #f6f5f1;
+  --ink: #0c0c0c;
+  --ink2: #4a4a4a;
+  --muted: #999;
+  --rule: rgba(0,0,0,0.09);
+  --snap-h: 100vh;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html {
+  scroll-snap-type: y proximity;
+  scroll-behavior: smooth;
+  overflow-y: scroll;
+}
+
+body {
+  font-family: 'Baskerville', Georgia, serif;
+  background: var(--off);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── PROGRESS ─────────────────────────────── */
+#progress {
+  position: fixed; top: 52px; left: 0; height: 2px;
+  background: var(--cobalt); width: 0%; z-index: 200;
+  transition: width 0.08s linear;
+}
+
+/* ── NAV ──────────────────────────────────── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; height: 52px;
+  background: var(--white); border-bottom: 1px solid var(--rule);
+  display: flex; align-items: stretch; z-index: 100;
+}
+
+.nav-brand {
+  display: flex; align-items: center;
+  padding: 0 2rem;
+  font-family: 'Founders Grotesk', sans-serif; font-weight: 800;
+  font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--cobalt); text-decoration: none;
+  border-right: 1px solid var(--rule); margin-right: auto;
+  white-space: nowrap;
+}
+
+.nav-links { display: flex; list-style: none; }
+
+.nav-links a {
+  display: flex; align-items: center;
+  padding: 0 18px; height: 52px;
+  font-family: 'Founders Grotesk', sans-serif; font-weight: 600;
+  font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+  text-decoration: none; color: var(--ink2);
+  border-left: 1px solid var(--rule);
+  transition: background 0.18s, color 0.18s;
+}
+
+.nav-links a:hover { background: var(--cobalt-dim); color: var(--cobalt); }
+.nav-links a.active { background: var(--cobalt); color: var(--white); }
+
+/* ── SECTION BASE ─────────────────────────── */
+.snap { scroll-snap-align: start; }
+
+/* ── COVER ────────────────────────────────── */
+#cover {
+  min-height: var(--snap-h); padding-top: 52px;
+  background: var(--cobalt);
+  display: grid; grid-template-columns: 1fr 1fr;
+  position: relative; overflow: hidden;
+}
+
+#cover::after {
+  content: 'MDF';
+  position: absolute; right: -2vw; bottom: -2rem;
+  font-family: 'Founders Grotesk', sans-serif; font-weight: 800;
+  font-size: clamp(120px, 24vw, 290px);
+  color: rgba(255,255,255,0.04); line-height: 0.8;
+  letter-spacing: -0.05em; pointer-events: none;
+}
+
+.cover-l {
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 5rem 3.5rem 6rem 6vw;
+}
+
+.cover-r {
+  display: flex; flex-direction: column; justify-content: flex-start;
+  padding: 9rem 6vw 6rem 3.5rem;
+  border-left: 1px solid rgba(255,255,255,0.12);
+}
+
+.cover-eyebrow {
+  font-family: 'Founders Grotesk', sans-serif; font-weight: 600;
+  font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: rgba(255,255,255,0.38); margin-bottom: 2.5rem;
+}
+
+.cover-title {
+  font-family: 'Founders Grotesk', sans-serif; font-weight: 800;
+  font-size: clamp(3.2rem, 7vw, 7.5rem);
+  line-height: 0.88; letter-spacing: -0.03em; color: var(--white);
+}
+
+.cover-body {
+  font-family: 'Baskerville', Georgia, serif;
+  font-size: 1.05rem; line-height: 1.75;
+  color: rgba(255,255,255,0.65); max-width: 420px; margin-bottom: 3rem;
+}
+
+.cover-meta {
+  font-family: 'Founders Grotesk', sans-serif; font-size: 11px;
+  font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+  color: rgba(255,255,255,0.35); line-height: 2.2;
+}
+
+.scroll-hint {
+  position: absolute; bottom: 3rem; left: 50%;
+  transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  color: rgba(255,255,255,0.3);
+  font-family: 'Founders Grotesk', sans-serif; font-size: 10px;
+  letter-spacing: 0.15em; text-transform: uppercase;
+}
+
+.scroll-line {
+  width: 1px; height: 36px;
+  background: rgba(255,255,255,0.25);
+  animation: pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,100% { opacity: 0.25; transform: scaleY(1); }
+  50%      { opacity: 0.7;  transform: scaleY(1.15); }
+}
+
+/* ── CHAPTER OPENER ───────────────────────── */
+.ch-opener {
+  min-height: var(--snap-h); padding-top: 52px;
+  background: var(--cobalt); color: var(--white);
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding-bottom: 6rem; padding-left: 6vw; padding-right: 6vw;
+  position: relative; overflow: hidden;
+}
+
+.ch-opener::before {
+  content: attr(data-n);
+  position: absolute; top: 52px; right: 4vw;
+  font-family: 'Founders Grotesk', sans-serif; font-weight: 800;
+  font-size: clamp(120px, 22vw, 260px);
+  color: rgba(255,255,255,0.05); line-height: 1;
+  letter-spacing: -0.05em; pointer-events: none;
+}
+
+.ch-label {
+  font-family: 'Founders Grotesk', sans-serif; font-weight: 600;
+  font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: rgba(255,255,255,0.42); margin-bottom: 2rem;
+}
+
+.ch-title {
+  font-family: 'Founders Grotesk', sans-serif; font-weight: 800;
+  font-size: clamp(3rem, 8.5vw, 8.5rem);
+  line-height: 0.9; letter-spacing: -0.02em; max-width: 880px;
+}
+
+.ch-sub {
+  margin-top: 3rem; font-family: 'Baskerville', Georgia, serif;
+  font-style: italic;
+  font-size: clamp(1.05rem, 1.5vw, 1.3rem); line-height: 1.6;
+  color: rgba(255,255,255,0.65); max-width: 520px;
+}
+
+/* ── CONTENT SPLIT ────────────────────────── */
+.split {
+  min-height: var(--snap-h); padding-top: 52px;
+  background: var(--white);
+  display: grid; grid-template-columns: 1fr 2fr;
+  position: relative;
+}
+
+.split.flip { grid-template-columns: 2fr 1fr; }
+
+.split-aside {
+  padding: 5rem 2.5rem 5rem 6vw;
+  border-right: 1px solid var(--rule);
+  display: flex; flex-direction: column; justify-content: space-between;
+}
+
+.split-aside.right-side {
+  border-right: none; border-left: 1px solid var(--rule);
+  padding: 5rem 6vw 5rem 2.5rem;
+}
+
+.aside-big {
+  font-family: 'Founders Grotesk', sans-serif; font-weight: 800;
+  font-size: 6rem; line-height: 0.9;
+  color: var(--cobalt); letter-spacing: -0.04em;
+}
+
+.aside-tag {
+  font-family: 'Founders Grotesk', sans-serif; font-size: 10px; font-weight: 600;
+  letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted);
+  line-height: 2.2;
+}
+
+.split-main {
+  padding: 5rem 6vw 5rem 4rem;
+  overflow-y: auto;
+}
+
+.split-main.right-main { padding: 5rem 4rem 5rem 6vw; }
+
+/* ── TYPOGRAPHY ELEMENTS ──────────────────── */
+.lead {
+  font-family: 'Founders Grotesk', sans-serif; font-weight: 800;
+  font-size: clamp(1.6rem, 3vw, 2.6rem);
+  line-height: 1.1; letter-spacing: -0.01em;
+  margin-bottom: 2rem; max-width: 560px;
+}
+
+.body {
+  font-family: 'Baskerville', Georgia, serif;
+  font-size: 1.05rem; line-height: 1.8; color: var(--ink2);
+  max-width: 520px; margin-bottom: 1.8rem;
+}
+
+.pull {
+  font-family: 'Founders Grotesk', sans-serif; font-weight: 600;
+  font-size: clamp(1.25rem, 2.2vw, 1.75rem); line-height: 1.25;
+  letter-spacing: -0.01em; color: var(--cobalt);
+  border-left: 3px solid var(--cobalt);
+  padding-left: 1.4rem; margin: 2.5rem 0;
+  max-width: 480px;
+}
+
+/* ── PROCESS STEPS ────────────────────────── */
+.steps { margin-top: 2.5rem; }
+
+.step {
+  display: grid; grid-template-columns: 44px 1fr; gap: 1.4rem;
+  padding: 1.4rem 0; border-top: 1px solid var(--rule);
+  align-items: start;
+}
+
+.step-n {
+  font-family: 'Founders Grotesk', sans-serif; font-weight: 800;
+  font-size: 1.8rem; color: var(--cobalt); line-height: 1;
+}
+
+.step-h {
+  font-family: 'Founders Grotesk', sans-serif; font-weight: 600;
+  font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+  margin-bottom: 0.4rem;
+}
+
+.step-b { font-family: 'Baskerville', Georgia, serif; font-size: 1rem; line-height: 1.6; color: var(--ink2); }
+
+/* ── PILLARS ──────────────────────────────── */
+.pillars { display: grid; grid-template-columns: 1fr; gap: 1px; background: var(--rule); margin-top: 2.5rem; max-width: 540px; }
+
+.pillar { background: var(--white); padding: 1.8rem 2rem; }
+.pillar:first-child { background: var(--cobalt); color: var(--white); }
+.pillar-n { font-family: 'Founders Grotesk', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; opacity: 0.5; margin-bottom: 0.6rem; }
+.pillar-h { font-family: 'Founders Grotesk', sans-serif; font-weight: 800; font-size: 1.3rem; margin-bottom: 0.5rem; letter-spacing: -0.01em; }
+.pillar-b { font-family: 'Baskerville', Georgia, serif; font-size: 0.95rem; line-height: 1.6; color: var(--ink2); }
+.pillar:first-child .pillar-b { color: rgba(255,255,255,0.75); }
+
+/* ── PRINCIPLES SECTION ───────────────────── */
+#principles-grid {
+  background: var(--off);
+  padding: calc(52px + 5rem) 6vw 5rem;
+  min-height: var(--snap-h);
+}
+
+.pg-header {
+  display: grid; grid-template-columns: 2fr 1fr;
+  gap: 3rem; align-items: end; margin-bottom: 3.5rem;
+}
+
+.pg-cats {
+  font-family: 'Founders Grotesk', sans-serif; font-size: 10px; font-weight: 600;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
+  line-height: 2.4; text-align: right;
+}
+
+.pg {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 1px; background: rgba(0,0,0,0.07);
+}
+
+.pcard {
+  background: var(--white); padding: 1.6rem 1.4rem;
+  cursor: default; transition: background 0.18s, color 0.18s;
+  position: relative;
+}
+
+.pcard:hover { background: var(--cobalt); color: var(--white); }
+
+.pcard-n {
+  font-family: 'Founders Grotesk', sans-serif; font-weight: 800;
+  font-size: 2.4rem; line-height: 1; letter-spacing: -0.03em;
+  color: var(--cobalt); margin-bottom: 0.8rem;
+  transition: color 0.18s;
+}
+
+.pcard:hover .pcard-n { color: rgba(255,255,255,0.25); }
+
+.pcard-cat {
+  font-family: 'Founders Grotesk', sans-serif; font-size: 9px; font-weight: 600;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+  margin-bottom: 0.4rem; transition: color 0.18s;
+}
+
+.pcard:hover .pcard-cat { color: rgba(255,255,255,0.5); }
+
+.pcard-h {
+  font-family: 'Founders Grotesk', sans-serif; font-weight: 800;
+  font-size: 12px; letter-spacing: 0.02em; text-transform: uppercase;
+  margin-bottom: 0.6rem;
+}
+
+.pcard-b {
+  font-family: 'Baskerville', Georgia, serif; font-size: 0.9rem; line-height: 1.5; color: var(--ink2);
+  transition: color 0.18s;
+}
+
+.pcard:hover .pcard-b { color: rgba(255,255,255,0.75); }
+
+/* ── CASE SECTIONS ────────────────────────── */
+.case {
+  min-height: var(--snap-h); padding-top: 52px;
+  background: var(--white);
+  display: grid; grid-template-columns: 52% 48%;
+}
+
+.case.alt { background: var(--off); }
+
+.case-text {
+  padding: 6rem 3.5rem 6rem 6vw;
+  display: flex; flex-direction: column; justify-content: center;
+}
+
+.case-visual {
+  border-left: 1px solid var(--rule);
+  display: flex; align-items: center; justify-content: center;
+  padding: 4rem 6vw 4rem 3rem;
+}
+
+.case-n {
+  font-family: 'Founders Grotesk', sans-serif; font-size: 10px; font-weight: 600;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--cobalt); margin-bottom: 1.5rem;
+}
+
+.case-h {
+  font-family: 'Founders Grotesk', sans-serif; font-weight: 800;
+  font-size: clamp(1.8rem, 3.5vw, 3rem);
+  line-height: 1; letter-spacing: -0.02em;
+  margin-bottom: 2rem; max-width: 460px;
+}
+
+/* ── WAYFINDING DEMO ──────────────────────── */
+.wf { width: 100%; max-width: 340px; border: 1px solid var(--rule); }
+
+.wf-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 1.3rem 1.75rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.wf-row:last-child { border-bottom: none; }
+.wf-row.primary { background: var(--cobalt); }
+.wf-row.primary .wf-label, .wf-row.primary .wf-arr { color: var(--white); }
+
+.wf-label {
+  font-family: 'Founders Grotesk', sans-serif; font-weight: 600; font-size: 1rem;
+  color: var(--ink);
+}
+
+.wf-arr {
+  font-family: 'Founders Grotesk', sans-serif; font-weight: 600;
+  font-size: 1.3rem; color: var(--cobalt);
+}
+
+/* ── BAR CHART DEMO ───────────────────────── */
+.chart-wrap { width: 100%; max-width: 360px; }
+
+.chart-title {
+  font-family: 'Founders Grotesk', sans-serif; font-size: 10px; font-weight: 600;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 1.2rem;
+}
+
+.bars { display: flex; align-items: flex-end; gap: 6px; height: 140px; }
+
+.bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; justify-content: flex-end; }
+
+.bar-fill { width: 100%; border-radius: 2px 2px 0 0; background: rgba(0,51,160,0.12); }
+.bar-fill.hi { background: var(--cobalt); }
+
+.bar-lbl {
+  font-family: 'Founders Grotesk', sans-serif; font-size: 10px; font-weight: 600;
+  color: var(--muted);
+}
+
+.chart-note {
+  border-top: 1px solid var(--rule); padding-top: 0.75rem; margin-top: 0.25rem;
+  font-family: 'Baskerville', Georgia, serif; font-style: italic; font-size: 0.9rem; color: var(--muted);
+}
+
+/* ── CHRONO DEMO ──────────────────────────── */
+.chrono-wrap { width: 100%; max-width: 300px; }
+
+.chrono-title {
+  font-family: 'Founders Grotesk', sans-serif; font-size: 10px; font-weight: 600;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 1.5rem;
+}
+
+.chrono-row {
+  display: grid; grid-template-columns: 38px 1fr; gap: 1rem;
+  align-items: start; border-top: 1px solid var(--rule); padding: 1rem 0;
+}
+
+.chrono-speed {
+  font-family: 'Founders Grotesk', sans-serif; font-size: 9px; font-weight: 600;
+  letter-spacing: 0.05em; text-transform: uppercase; color: var(--cobalt);
+  padding-top: 4px;
+}
+
+.chrono-lines { display: flex; flex-direction: column; gap: 5px; }
+.c-line { height: 7px; background: var(--ink); border-radius: 1px; }
+
+/* ── CONCLUSION ───────────────────────────── */
+#conclusion-body {
+  background: var(--ink); color: var(--white);
+  min-height: var(--snap-h); padding-top: 52px;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: calc(52px + 6rem) 6vw 6rem;
+  position: relative; overflow: hidden;
+}
+
+#conclusion-body::after {
+  content: 'DESIGN'; position: absolute;
+  bottom: -1rem; right: -1rem;
+  font-family: 'Founders Grotesk', sans-serif; font-weight: 800;
+  font-size: clamp(100px, 18vw, 200px);
+  color: rgba(255,255,255,0.02); line-height: 1;
+  letter-spacing: -0.05em; pointer-events: none;
+}
+
+.concl-lead {
+  font-family: 'Founders Grotesk', sans-serif; font-weight: 800;
+  font-size: clamp(2rem, 5.5vw, 5.5rem);
+  line-height: 0.93; letter-spacing: -0.02em;
+  max-width: 820px; margin-bottom: 3rem;
+}
+
+.concl-lead em { font-style: normal; color: #5b9bff; }
+
+.concl-body {
+  font-family: 'Baskerville', Georgia, serif;
+  font-size: 1.15rem; line-height: 1.8;
+  color: rgba(255,255,255,0.6); max-width: 580px; margin-bottom: 4rem;
+}
+
+.colophon {
+  display: flex; gap: 4rem; flex-wrap: wrap;
+  border-top: 1px solid rgba(255,255,255,0.1); padding-top: 2rem;
+  font-family: 'Founders Grotesk', sans-serif; font-size: 10px; font-weight: 600;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+}
+
+/* ── RESPONSIVE ───────────────────────────── */
+@media (max-width: 860px) {
+  #cover { grid-template-columns: 1fr; }
+  .cover-r { display: none; }
+  .split, .split.flip { grid-template-columns: 1fr; }
+  .split-aside, .split-aside.right-side {
+    border-right: none; border-left: none;
+    border-bottom: 1px solid var(--rule);
+    flex-direction: row; align-items: center; gap: 1.5rem;
+    padding: 2rem 6vw; height: auto;
+  }
+  .pg { grid-template-columns: repeat(2, 1fr); }
+  .pg-header { grid-template-columns: 1fr; }
+  .case, .case.alt { grid-template-columns: 1fr; }
+  .case-visual { display: none; }
+  .nav-links li:nth-child(n+3) { display: none; }
+}
+
+@media (max-width: 540px) {
+  .pg { grid-template-columns: 1fr 1fr; }
+  .nav-links { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<!-- ── NAV ────────────────────────────────── -->
+<nav>
+  <a href="#cover" class="nav-brand">Message Design</a>
+  <ul class="nav-links">
+    <li><a href="#ch-basis"    data-sec="ch-basis">Basis</a></li>
+    <li><a href="#ch-pillars"  data-sec="ch-pillars">Pillars</a></li>
+    <li><a href="#ch-principles" data-sec="ch-principles">16 Principles</a></li>
+    <li><a href="#ch-cases"    data-sec="ch-cases">Case Studies</a></li>
+    <li><a href="#ch-conclusion" data-sec="ch-conclusion">Conclusion</a></li>
+  </ul>
+</nav>
+
+<!-- ══════════════════════════════════════════
+     01 COVER
+════════════════════════════════════════════ -->
+<section id="cover" class="snap">
+  <div class="cover-l">
+    <div class="cover-eyebrow">Slanted Publishers — 2026</div>
+    <h1 class="cover-title">THE<br>MESSAGE<br>DESIGN<br>FRAME<br>WORK</h1>
+  </div>
+  <div class="cover-r">
+    <p class="cover-body">
+      Theory and practice cannot exist without each other. This publication explores the fundamental 
+      principles of message design — from the YinYang balance of form and content, through the architecture 
+      of communication, to the sixteen principles that govern effective visual language.
+    </p>
+    <div class="cover-meta">
+      Author: Fernandez Luïz<br>
+      Typeface: Founders Grotesk &amp; Baskerville<br>
+      Paper: Munken Pure 120g<br>
+      Year: 2026
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     02 CH OPENER — BASIS
+════════════════════════════════════════════ -->
+<section id="ch-basis" class="ch-opener snap" data-n="01">
+  <div class="ch-label">Chapter One</div>
+  <h2 class="ch-title">The Basis &amp;<br>YinYang<br>Balance</h2>
+  <p class="ch-sub">
+    The goal of message design is to transmit information to the receiver as effectively as possible. 
+    Logic and emotion cannot exist without each other.
+  </p>
+</section>
+
+<!-- 02b CONTENT -->
+<section class="split snap">
+  <div class="split-aside">
+    <div>
+      <div class="aside-big">01</div>
+      <div class="aside-tag">The Basis</div>
+    </div>
+    <div class="aside-tag">
+      Sender → Receiver<br>
+      Attention → Retention
+    </div>
+  </div>
+  <div class="split-main">
+    <h3 class="lead">How is a message received?</h3>
+    <p class="body">
+      The process of communication follows a strict path from the sender to the receiver. A good design 
+      not only attracts attention — it ensures the message is correctly understood and remembered. 
+      Form and content must be perfectly aligned to create impact.
+    </p>
+    <div class="pull">
+      "Theory and practice cannot exist without each other."
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-n">01</div>
+        <div>
+          <div class="step-h">Attention</div>
+          <div class="step-b">The message must first attract attention. Without this initial hook, the entire communication chain fails before it begins.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">02</div>
+        <div>
+          <div class="step-h">Legibility</div>
+          <div class="step-b">If a text is too difficult or unattractively designed, the reader drops out. Visual clarity is not optional — it is structural.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">03</div>
+        <div>
+          <div class="step-h">Understanding</div>
+          <div class="step-b">The receiver must be able to interpret the information correctly. Ambiguity is the enemy of comprehension.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">04</div>
+        <div>
+          <div class="step-h">Retention</div>
+          <div class="step-b">The ability to remember the information. A message that cannot be recalled has not truly been communicated.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     03 CH OPENER — THREE PILLARS
+════════════════════════════════════════════ -->
+<section id="ch-pillars" class="ch-opener snap" data-n="02">
+  <div class="ch-label">Chapter Two</div>
+  <h2 class="ch-title">The Three<br>Pillars of<br>Design</h2>
+  <p class="ch-sub">
+    Within message design, three disciplines work closely together: Graphic Design, 
+    Information Design, and Instruction Design.
+  </p>
+</section>
+
+<!-- 03b CONTENT -->
+<section class="split flip snap">
+  <div class="split-main right-main">
+    <h3 class="lead">Three disciplines.<br>One message.</h3>
+    <p class="body">
+      Message design is not a single discipline — it is the intersection of three fields, each contributing 
+      its own logic to the transmission of knowledge. Their overlap is where effective communication lives.
+    </p>
+    <div class="pillars">
+      <div class="pillar">
+        <div class="pillar-n">01 — Graphic Design</div>
+        <div class="pillar-h">Aesthetics &amp; Atmosphere</div>
+        <p class="pillar-b">Focuses on visual aesthetics, color, and typography to evoke emotion and create the affective dimension of the message.</p>
+      </div>
+      <div class="pillar">
+        <div class="pillar-n">02 — Information Design</div>
+        <div class="pillar-h">Clarity &amp; Structure</div>
+        <p class="pillar-b">Ensures the structure, clarity, and logic of data so that it is easily findable, navigable, and understandable by the reader.</p>
+      </div>
+      <div class="pillar">
+        <div class="pillar-n">03 — Instruction Design</div>
+        <div class="pillar-h">Action &amp; Outcome</div>
+        <p class="pillar-b">Focuses on action: how do you help the user perform a specific task correctly? Design as a directive force.</p>
+      </div>
+    </div>
+  </div>
+  <div class="split-aside right-side">
+    <div>
+      <div class="aside-big">02</div>
+      <div class="aside-tag">The Pillars</div>
+    </div>
+    <div class="aside-tag">
+      Graphic<br>Information<br>Instruction
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     04 CH OPENER — 16 PRINCIPLES
+════════════════════════════════════════════ -->
+<section id="ch-principles" class="ch-opener snap" data-n="03">
+  <div class="ch-label">Chapter Three</div>
+  <h2 class="ch-title">The 16<br>Principles</h2>
+  <p class="ch-sub">
+    Based on selected research and practical experience, divided into functional, administrative, 
+    aesthetic, and cognitive categories.
+  </p>
+</section>
+
+<!-- 04b GRID -->
+<section id="principles-grid" class="snap">
+  <div class="pg-header">
+    <h3 class="lead" style="max-width:100%; margin-bottom:0;">Mapping the core principles<br>of Message Design.</h3>
+    <div class="pg-cats">Functional<br>Administrative<br>Aesthetic<br>Cognitive</div>
+  </div>
+  <div class="pg">
+    <div class="pcard"><div class="pcard-n">01</div><div class="pcard-cat">Functional</div><div class="pcard-h">Define the Problem</div><p class="pcard-b">Form must strictly follow function. Fully understand the core problem before a single line is drawn.</p></div>
+    <div class="pcard"><div class="pcard-n">02</div><div class="pcard-cat">Functional</div><div class="pcard-h">Provide Structure</div><p class="pcard-b">Organize information in a logical hierarchy. A systematic framework guides the user without confusion.</p></div>
+    <div class="pcard"><div class="pcard-n">03</div><div class="pcard-cat">Functional</div><div class="pcard-h">Provide Clarity</div><p class="pcard-b">Eliminate ambiguity. Every visual element must actively contribute to the immediate understanding of the message.</p></div>
+    <div class="pcard"><div class="pcard-n">04</div><div class="pcard-cat">Functional</div><div class="pcard-h">Provide Simplicity</div><p class="pcard-b">Strip away the non-essential. Minimalism is not removing content — it is optimizing the space between meaning and decoration.</p></div>
+    <div class="pcard"><div class="pcard-n">05</div><div class="pcard-cat">Administrative</div><div class="pcard-h">Provide Emphasis</div><p class="pcard-b">Direct the reader's eye exclusively to critical variables using strategic weight and placement.</p></div>
+    <div class="pcard"><div class="pcard-n">06</div><div class="pcard-cat">Administrative</div><div class="pcard-h">Provide Unity</div><p class="pcard-b">Ensure cohesive relationships between all design components. Unity builds absolute trust and stylistic harmony.</p></div>
+    <div class="pcard"><div class="pcard-n">07</div><div class="pcard-cat">Administrative</div><div class="pcard-h">Information Access</div><p class="pcard-b">Structure layouts to lower cognitive friction. Information must be instantly searchable and accessible.</p></div>
+    <div class="pcard"><div class="pcard-n">08</div><div class="pcard-cat">Administrative</div><div class="pcard-h">Information Costs</div><p class="pcard-b">Respect the user's mental energy. A messy design costs time and focus; optimization saves human processing capital.</p></div>
+    <div class="pcard"><div class="pcard-n">09</div><div class="pcard-cat">Aesthetic</div><div class="pcard-h">Aesthetic Proportion</div><p class="pcard-b">Harmony is rooted in mathematics. Use proportional systems to create balance that feels naturally correct.</p></div>
+    <div class="pcard"><div class="pcard-n">10</div><div class="pcard-cat">Aesthetic</div><div class="pcard-h">Harmony Principle</div><p class="pcard-b">Consistency in style, weight, and color creates a unified visual language that reduces interpretive effort.</p></div>
+    <div class="pcard"><div class="pcard-n">11</div><div class="pcard-cat">Aesthetic</div><div class="pcard-h">Facilitate Attention</div><p class="pcard-b">Design is an invitation. Use visual triggers to capture interest and guide the reader through the hierarchy.</p></div>
+    <div class="pcard"><div class="pcard-n">12</div><div class="pcard-cat">Aesthetic</div><div class="pcard-h">Facilitate Perception</div><p class="pcard-b">Make patterns obvious. Humans are wired to recognize structures — leverage this for rapid data decoding.</p></div>
+    <div class="pcard"><div class="pcard-n">13</div><div class="pcard-cat">Cognitive</div><div class="pcard-h">Mental Processing</div><p class="pcard-b">Reduce cognitive load. Present information in chunks that align with human memory limits.</p></div>
+    <div class="pcard"><div class="pcard-n">14</div><div class="pcard-cat">Cognitive</div><div class="pcard-h">Facilitate Memory</div><p class="pcard-b">Create lasting impressions. Use repetition, narrative, and visual hooks to anchor the core message in long-term memory.</p></div>
+    <div class="pcard"><div class="pcard-n">15</div><div class="pcard-cat">Cognitive</div><div class="pcard-h">Facilitate Action</div><p class="pcard-b">Design for the outcome. Every message should clearly indicate the user's next step, removing decision friction.</p></div>
+    <div class="pcard"><div class="pcard-n">16</div><div class="pcard-cat">Cognitive</div><div class="pcard-h">Iterate &amp; Refine</div><p class="pcard-b">Design is an ongoing cycle. Validate with real-world feedback and continuously adjust based on actual user interaction.</p></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     05 CH OPENER — CASE STUDIES
+════════════════════════════════════════════ -->
+<section id="ch-cases" class="ch-opener snap" data-n="04">
+  <div class="ch-label">Chapter Four</div>
+  <h2 class="ch-title">Three<br>Case<br>Studies</h2>
+  <p class="ch-sub">
+    The ultimate test of Message Design principles: wayfinding systems, data visualization, 
+    and the architecture of the printed page.
+  </p>
+</section>
+
+<!-- 05b CASE 01 — WAYFINDING -->
+<section class="case snap">
+  <div class="case-text">
+    <div class="case-n">Case Study 01 — Wayfinding</div>
+    <h3 class="case-h">"A sign is only effective when it eliminates alternative choices."</h3>
+    <p class="body">
+      The ultimate test of Message Design occurs in complex physical spaces — international airports and 
+      transit hubs. Wayfinding relies entirely on the immediate, unambiguous transmission of data.
+    </p>
+    <p class="body">
+      By isolating critical directional markers and removing visual noise from surrounding architecture, 
+      the environment becomes intuitive. Abstract geographic data transforms into clear, actionable instruction.
+    </p>
+  </div>
+  <div class="case-visual">
+    <div class="wf">
+      <div class="wf-row primary">
+        <span class="wf-label">Gate B12–B24</span>
+        <span class="wf-arr">→</span>
+      </div>
+      <div class="wf-row">
+        <span class="wf-label">Arrivals Hall</span>
+        <span class="wf-arr" style="color:var(--cobalt)">↓</span>
+      </div>
+      <div class="wf-row">
+        <span class="wf-label">Baggage Claim</span>
+        <span class="wf-arr" style="color:var(--cobalt)">↓</span>
+      </div>
+      <div class="wf-row">
+        <span class="wf-label">Ground Transport</span>
+        <span class="wf-arr" style="color:var(--cobalt)">→</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 05c CASE 02 — DATA VIZ -->
+<section class="case alt snap">
+  <div class="case-text">
+    <div class="case-n">Case Study 02 — Data Visualization</div>
+    <h3 class="case-h">"To clarify is not to simplify, but to optimize."</h3>
+    <p class="body">
+      Raw numbers carry no inherent narrative — they require a structured visual environment to become 
+      meaningful information. The law of elimination becomes paramount: ruthlessly strip away decorative 
+      elements to let the data speak for itself.
+    </p>
+    <p class="body">
+      High contrast is applied exclusively to the most critical variables, forcing the reader's eye 
+      to immediately register the core discovery without cognitive friction.
+    </p>
+  </div>
+  <div class="case-visual" style="background: var(--white);">
+    <div class="chart-wrap">
+      <div class="chart-title">Cognitive Load Index — Q1 through Q6</div>
+      <div class="bars">
+        <div class="bar-col"><div class="bar-fill" style="height:35%"></div><div class="bar-lbl">Q1</div></div>
+        <div class="bar-col"><div class="bar-fill" style="height:52%"></div><div class="bar-lbl">Q2</div></div>
+        <div class="bar-col"><div class="bar-fill hi" style="height:88%"></div><div class="bar-lbl">Q3</div></div>
+        <div class="bar-col"><div class="bar-fill" style="height:61%"></div><div class="bar-lbl">Q4</div></div>
+        <div class="bar-col"><div class="bar-fill" style="height:42%"></div><div class="bar-lbl">Q5</div></div>
+        <div class="bar-col"><div class="bar-fill" style="height:28%"></div><div class="bar-lbl">Q6</div></div>
+      </div>
+      <div class="chart-note">Peak load identified at Q3 — primary intervention point.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 05d CASE 03 — EDITORIAL -->
+<section class="case snap">
+  <div class="case-text">
+    <div class="case-text">
+      <div class="case-n">Case Study 03 — Editorial Architecture</div>
+      <h3 class="case-h">Chronography: the page as cinematic sequence.</h3>
+      <p class="body">
+        A magazine should not be a series of static, isolated layouts, but a fluid cinematic sequence. 
+        By manipulating text density and the strategic placement of white space, a designer controls the 
+        exact speed at which a reader consumes information.
+      </p>
+      <p class="body">
+        Heavy, dense columns slow the gaze for deep focus. Explosive typographic statements and generous 
+        negative space accelerate pacing — creating an intentional psychological rhythm throughout.
+      </p>
+    </div>
+  </div>
+  <div class="case-visual">
+    <div class="chrono-wrap">
+      <div class="chrono-title">Reading Speed — Density Control</div>
+      <div class="chrono-row">
+        <div class="chrono-speed">Slow</div>
+        <div class="chrono-lines">
+          <div class="c-line" style="width:100%"></div>
+          <div class="c-line" style="width:97%"></div>
+          <div class="c-line" style="width:100%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     06 CONCLUSION
+════════════════════════════════════════════ -->
+<section id="ch-conclusion" class="snap">
+  <div id="conclusion-body">
+    <h2 class="concl-lead">The responsibility of the <em>designer</em>.</h2>
+    <p class="concl-body">
+      Message design is fundamentally an act of discipline. As technologies advance and the velocity 
+      of information accelerates, the human cognitive capacity remains unchanged. To practice design 
+      responsibly is to reject decoration in favor of utility, and complexity in favor of clarity.
+    </p>
+    <div class="colophon">
+      <div>Title: The Message Design Framework</div>
+      <div>Author: Fernandez Luïz</div>
+      <div>Typeface: Founders Grotesk &amp; Baskerville</div>
+      <div>Year: 2026</div>
+    </div>
+  </div>
+</section>
+
+<script>
+// Simple dynamic highlight logic for navigation line
+const sections = document.querySelectorAll('section');
+const navLinks = document.querySelectorAll('.nav-links a');
+const progressBar = document.getElementById('progress');
+
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(section => {
+    const sectionTop = section.offsetTop;
+    if (pageYOffset >= sectionTop - 60) {
+      current = section.getAttribute('id');
+    }
+  });
+
+  navLinks.forEach(a => {
+    a.classList.remove('active');
+    if (a.getAttribute('data-sec') === current) {
+      a.classList.add('active');
+    }
+  });
+
+  // Progress Bar
+  const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
+  if (totalScroll > 0) {
+    const scrolled = (window.pageYOffset / totalScroll) * 100;
+    progressBar.style.width = scrolled + '%';
+  }
+});
+</script>
+</body>
+</html>
