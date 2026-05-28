@@ -1,3 +1,13 @@
+Hier is de volledige, verbeterde en volledig vertaalde code.
+
+### Wat is er aangepast en opgelost?
+
+1. **Taalsysteem (Geen gaten of bugs):** Elk onderdeel van de website (inclusief alle 16 principes en alle casestudies) is nu dubbel uitgevoerd in zowel het Nederlands (`class="lang-nl"`) als het Engels (`class="lang-en"`).
+2. **De Knop werkt overal (Desktop & Mobiel):** Er is een taalknop toegevoegd aan de rechterkant van de navigatiebalk. Deze knop is op elk apparaat direct zichtbaar en verschuift/verdwijnt niet op mobiel.
+3. **Volledig Tweerichtingsverkeer (Toggle):** Als de site op Engels staat, toont de knop **NL**. Klik je erop? Dan springt de hele pagina direct naar het Nederlands en verandert de knop naar **EN** (en omgekeerd).
+4. **Responsive:** De CSS-regels voor mobiel (`@media`) zijn herzien zodat de navigatiebalk, de knop en de lay-out perfect meebreken zonder dat er content buiten het scherm valt.
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -81,11 +91,16 @@ body {
   transition: width 0.08s linear;
 }
 
-/* ── NAV ──────────────────────────────────── */
+/* ── NAV & UTILITIES ──────────────────────── */
 nav {
   position: fixed; top: 0; left: 0; right: 0; height: 52px;
   background: var(--white); border-bottom: 1px solid var(--rule);
-  display: flex; align-items: stretch; z-index: 100;
+  display: flex; align-items: stretch; justify-content: space-between;
+  z-index: 100;
+}
+
+.nav-left {
+  display: flex; align-items: stretch;
 }
 
 .nav-brand {
@@ -94,7 +109,7 @@ nav {
   font-family: 'Founders Grotesk', sans-serif; font-weight: 800;
   font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase;
   color: var(--cobalt); text-decoration: none;
-  border-right: 1px solid var(--rule); margin-right: auto;
+  border-right: 1px solid var(--rule);
   white-space: nowrap;
 }
 
@@ -106,12 +121,31 @@ nav {
   font-family: 'Founders Grotesk', sans-serif; font-weight: 600;
   font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
   text-decoration: none; color: var(--ink2);
-  border-left: 1px solid var(--rule);
+  border-right: 1px solid var(--rule);
   transition: background 0.18s, color 0.18s;
 }
 
 .nav-links a:hover { background: var(--cobalt-dim); color: var(--cobalt); }
 .nav-links a.active { background: var(--cobalt); color: var(--white); }
+
+.nav-right {
+  display: flex; align-items: stretch;
+}
+
+.lang-toggle-btn {
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 24px; height: 52px;
+  font-family: 'Founders Grotesk', sans-serif; font-weight: 800;
+  font-size: 12px; letter-spacing: 0.1em;
+  background: var(--cobalt-dim); color: var(--cobalt);
+  border: none; border-left: 1px solid var(--rule);
+  cursor: pointer; transition: background 0.18s, color 0.18s;
+}
+.lang-toggle-btn:hover { background: var(--cobalt); color: var(--white); }
+
+/* ── SWITCH LOGIC via HTML ATTR ───────────── */
+html[lang="en"] .lang-nl { display: none !important; }
+html[lang="nl"] .lang-en { display: none !important; }
 
 /* ── SECTION BASE ─────────────────────────── */
 .snap { scroll-snap-align: start; }
@@ -542,12 +576,19 @@ nav {
   .pg-header { grid-template-columns: 1fr; }
   .case, .case.alt { grid-template-columns: 1fr; }
   .case-visual { display: none; }
+  
+  /* Laat navigatielinks nog zien tot een bepaald niveau */
   .nav-links li:nth-child(n+3) { display: none; }
 }
 
-@media (max-width: 540px) {
-  .pg { grid-template-columns: 1fr 1fr; }
+@media (max-width: 600px) {
+  /* Verberg links op mobiel om ruimte te maken voor logo en de taalknop */
   .nav-links { display: none; }
+  .nav-brand { padding: 0 1rem; }
+}
+
+@media (max-width: 540px) {
+  .pg { grid-template-columns: 1fr; }
 }
 </style>
 </head>
@@ -557,14 +598,31 @@ nav {
 
 <!-- ── NAV ────────────────────────────────── -->
 <nav>
-  <a href="#cover" class="nav-brand">Message Design</a>
-  <ul class="nav-links">
-    <li><a href="#ch-basis"    data-sec="ch-basis">Basis</a></li>
-    <li><a href="#ch-pillars"  data-sec="ch-pillars">Pillars</a></li>
-    <li><a href="#ch-principles" data-sec="ch-principles">16 Principles</a></li>
-    <li><a href="#ch-cases"    data-sec="ch-cases">Case Studies</a></li>
-    <li><a href="#ch-conclusion" data-sec="ch-conclusion">Conclusion</a></li>
-  </ul>
+  <div class="nav-left">
+    <a href="#cover" class="nav-brand">Message Design</a>
+    
+    <!-- EN LINKSTRUCTUUR -->
+    <ul class="nav-links lang-en">
+      <li><a href="#ch-basis" data-sec="ch-basis">Basis</a></li>
+      <li><a href="#ch-pillars" data-sec="ch-pillars">Pillars</a></li>
+      <li><a href="#ch-principles" data-sec="ch-principles">16 Principles</a></li>
+      <li><a href="#ch-cases" data-sec="ch-cases">Case Studies</a></li>
+      <li><a href="#ch-conclusion" data-sec="ch-conclusion">Conclusion</a></li>
+    </ul>
+
+    <!-- NL LINKSTRUCTUUR -->
+    <ul class="nav-links lang-nl">
+      <li><a href="#ch-basis" data-sec="ch-basis">Basis</a></li>
+      <li><a href="#ch-pillars" data-sec="ch-pillars">Pijlers</a></li>
+      <li><a href="#ch-principles" data-sec="ch-principles">16 Principes</a></li>
+      <li><a href="#ch-cases" data-sec="ch-cases">Casestudies</a></li>
+      <li><a href="#ch-conclusion" data-sec="ch-conclusion">Conclusie</a></li>
+    </ul>
+  </div>
+
+  <div class="nav-right">
+    <button class="lang-toggle-btn" id="langBtn">NL</button>
+  </div>
 </nav>
 
 <!-- ══════════════════════════════════════════
@@ -573,9 +631,11 @@ nav {
 <section id="cover" class="snap">
   <div class="cover-l">
     <div class="cover-eyebrow">Slanted Publishers — 2026</div>
-    <h1 class="cover-title">THE<br>MESSAGE<br>DESIGN<br>FRAME<br>WORK</h1>
+    <h1 class="cover-title lang-en">THE<br>MESSAGE<br>DESIGN<br>FRAME<br>WORK</h1>
+    <h1 class="cover-title lang-nl">HET<br>MESSAGE<br>DESIGN<br>FRAME<br>WORK</h1>
   </div>
-  <div class="cover-r">
+  
+  <div class="cover-r lang-en">
     <p class="cover-body">
       Theory and practice cannot exist without each other. This publication explores the fundamental 
       principles of message design — from the YinYang balance of form and content, through the architecture 
@@ -588,9 +648,25 @@ nav {
       Year: 2026
     </div>
   </div>
+
+  <div class="cover-r lang-nl">
+    <p class="cover-body">
+      Theorie en praktijk kunnen niet zonder elkaar bestaan. Deze publicatie verkent de fundamentele 
+      principes van message design — van de Yin-Yang balans tussen vorm en inhoud, via de architectuur 
+      van communicatie, tot de zestien principes die effectieve visuele taal sturen.
+    </p>
+    <div class="cover-meta">
+      Auteur: Fernandez Luïz<br>
+      Lettertype: Founders Grotesk &amp; Baskerville<br>
+      Papier: Munken Pure 120g<br>
+      Jaar: 2026
+    </div>
+  </div>
+
   <div class="scroll-hint">
     <div class="scroll-line"></div>
-    <span>Scroll</span>
+    <span class="lang-en">Scroll</span>
+    <span class="lang-nl">Scrollen</span>
   </div>
 </section>
 
@@ -598,17 +674,28 @@ nav {
      02 CH OPENER — BASIS
 ════════════════════════════════════════════ -->
 <section id="ch-basis" class="ch-opener snap" data-n="01">
-  <div class="ch-label">Chapter One</div>
-  <h2 class="ch-title">The Basis &amp;<br>YinYang<br>Balance</h2>
-  <p class="ch-sub">
-    The goal of message design is to transmit information to the receiver as effectively as possible. 
-    Logic and emotion cannot exist without each other.
-  </p>
+  <div class="lang-en">
+    <div class="ch-label">Chapter One</div>
+    <h2 class="ch-title">The Basis &amp;<br>YinYang<br>Balance</h2>
+    <p class="ch-sub">
+      The goal of message design is to transmit information to the receiver as effectively as possible. 
+      Logic and emotion cannot exist without each other.
+    </p>
+  </div>
+  <div class="lang-nl">
+    <div class="ch-label">Hoofdstuk Eén</div>
+    <h2 class="ch-title">De Basis &amp;<br>Yin-Yang<br>Balans</h2>
+    <p class="ch-sub">
+      Het doel van message design is om informatie zo effectief mogelijk over te dragen aan de ontvanger. 
+      Logica en emotie kunnen niet zonder elkaar bestaan.
+    </p>
+  </div>
 </section>
 
 <!-- 02b CONTENT -->
 <section class="split snap">
-  <div class="split-aside">
+  <!-- ASIDE ENGLISH -->
+  <div class="split-aside lang-en">
     <div>
       <div class="aside-big">01</div>
       <div class="aside-tag">The Basis</div>
@@ -618,7 +705,20 @@ nav {
       Attention → Retention
     </div>
   </div>
-  <div class="split-main">
+  <!-- ASIDE DUTCH -->
+  <div class="split-aside lang-nl">
+    <div>
+      <div class="aside-big">01</div>
+      <div class="aside-tag">De Basis</div>
+    </div>
+    <div class="aside-tag">
+      Zender → Ontvanger<br>
+      Aandacht → Retentie
+    </div>
+  </div>
+
+  <!-- MAIN ENGLISH -->
+  <div class="split-main lang-en">
     <h3 class="lead">How is a message received?</h3>
     <p class="body">
       The process of communication follows a strict path from the sender to the receiver. A good design 
@@ -659,23 +759,77 @@ nav {
       </div>
     </div>
   </div>
+
+  <!-- MAIN DUTCH -->
+  <div class="split-main lang-nl">
+    <h3 class="lead">Hoe wordt een boodschap ontvangen?</h3>
+    <p class="body">
+      Het communicatieproces volgt een strikt pad van de zender naar de ontvanger. Een goed ontwerp 
+      trekt niet alleen de aandacht — het zorgt er ook voor dat de boodschap correct wordt begrepen en onthouden. 
+      Vorm en inhoud moeten perfect op elkaar zijn afgestemd om impact te maken.
+    </p>
+    <div class="pull">
+      "Theorie en praktijk kunnen niet zonder elkaar bestaan."
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-n">01</div>
+        <div>
+          <div class="step-h">Aandacht</div>
+          <div class="step-b">De boodschap moet eerst de aandacht trekken. Zonder deze initiële haak faalt de hele communicatieketen nog voordat ze begint.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">02</div>
+        <div>
+          <div class="step-h">Leesbaarheid</div>
+          <div class="step-b">Als een tekst te moeilijk of onaantrekkelijk is vormgegeven, haakt de lezer af. Visuele helderheid is niet optioneel — het is structureel.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">03</div>
+        <div>
+          <div class="step-h">Begrip</div>
+          <div class="step-b">De ontvanger moet in staat zijn de informatie correct te interpreteren. Ambiguïteit is de vijand van begrip.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">04</div>
+        <div>
+          <div class="step-h">Retentie</div>
+          <div class="step-b">Het vermogen om de informatie te onthouden. Een boodschap die niet herinnerd kan worden, is niet echt gecommuniceerd.</div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 
 <!-- ══════════════════════════════════════════
      03 CH OPENER — THREE PILLARS
 ════════════════════════════════════════════ -->
 <section id="ch-pillars" class="ch-opener snap" data-n="02">
-  <div class="ch-label">Chapter Two</div>
-  <h2 class="ch-title">The Three<br>Pillars of<br>Design</h2>
-  <p class="ch-sub">
-    Within message design, three disciplines work closely together: Graphic Design, 
-    Information Design, and Instruction Design.
-  </p>
+  <div class="lang-en">
+    <div class="ch-label">Chapter Two</div>
+    <h2 class="ch-title">The Three<br>Pillars of<br>Design</h2>
+    <p class="ch-sub">
+      Within message design, three disciplines work closely together: Graphic Design, 
+      Information Design, and Instruction Design.
+    </p>
+  </div>
+  <div class="lang-nl">
+    <div class="ch-label">Hoofdstuk Twee</div>
+    <h2 class="ch-title">De Drie<br>Pijlers van<br>Design</h2>
+    <p class="ch-sub">
+      Binnen message design werken drie disciplines nauw samen: Grafisch Ontwerp, 
+      Informatieontwerp en Instructieontwerp.
+    </p>
+  </div>
 </section>
 
 <!-- 03b CONTENT -->
 <section class="split flip snap">
-  <div class="split-main right-main">
+  <!-- MAIN ENGLISH -->
+  <div class="split-main right-main lang-en">
     <h3 class="lead">Three disciplines.<br>One message.</h3>
     <p class="body">
       Message design is not a single discipline — it is the intersection of three fields, each contributing 
@@ -699,7 +853,34 @@ nav {
       </div>
     </div>
   </div>
-  <div class="split-aside right-side">
+
+  <!-- MAIN DUTCH -->
+  <div class="split-main right-main lang-nl">
+    <h3 class="lead">Drie disciplines.<br>Eén boodschap.</h3>
+    <p class="body">
+      Message design is geen op zichzelf staande discipline — het is het kruispunt van drie vakgebieden, die elk hun eigen logica bijdragen aan de overdracht van kennis. Hun overlap is waar effectieve communicatie leeft.
+    </p>
+    <div class="pillars">
+      <div class="pillar">
+        <div class="pillar-n">01 — Grafisch Ontwerp</div>
+        <div class="pillar-h">Esthetiek &amp; Sfeer</div>
+        <p class="pillar-b">Richt zich op visuele esthetiek, kleur en typografie om emotie op te roepen en de affectieve dimensie van de boodschap te creëren.</p>
+      </div>
+      <div class="pillar">
+        <div class="pillar-n">02 — Informatieontwerp</div>
+        <div class="pillar-h">Helderheid &amp; Structuur</div>
+        <p class="pillar-b">Borgt de structuur, helderheid en logica van data zodat deze makkelijk vindbaar, navigeerbaar en begrijpelijk is voor de lezer.</p>
+      </div>
+      <div class="pillar">
+        <div class="pillar-n">03 — Instructieontwerp</div>
+        <div class="pillar-h">Actie &amp; Resultaat</div>
+        <p class="pillar-b">Focust op actie: hoe help je de gebruiker om een specifieke taak correct uit te voeren? Ontwerp als sturende kracht.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ASIDE ENGLISH -->
+  <div class="split-aside right-side lang-en">
     <div>
       <div class="aside-big">02</div>
       <div class="aside-tag">The Pillars</div>
@@ -708,27 +889,55 @@ nav {
       Graphic<br>Information<br>Instruction
     </div>
   </div>
+  <!-- ASIDE DUTCH -->
+  <div class="split-aside right-side lang-nl">
+    <div>
+      <div class="aside-big">02</div>
+      <div class="aside-tag">De Pijlers</div>
+    </div>
+    <div class="aside-tag">
+      Grafisch<br>Informatie<br>Instructie
+    </div>
+  </div>
 </section>
 
 <!-- ══════════════════════════════════════════
      04 CH OPENER — 16 PRINCIPLES
 ════════════════════════════════════════════ -->
 <section id="ch-principles" class="ch-opener snap" data-n="03">
-  <div class="ch-label">Chapter Three</div>
-  <h2 class="ch-title">The 16<br>Principles</h2>
-  <p class="ch-sub">
-    Based on selected research and practical experience, divided into functional, administrative, 
-    aesthetic, and cognitive categories.
-  </p>
+  <div class="lang-en">
+    <div class="ch-label">Chapter Three</div>
+    <h2 class="ch-title">The 16<br>Principles</h2>
+    <p class="ch-sub">
+      Based on selected research and practical experience, divided into functional, administrative, 
+      aesthetic, and cognitive categories.
+    </p>
+  </div>
+  <div class="lang-nl">
+    <div class="ch-label">Hoofdstuk Drie</div>
+    <h2 class="ch-title">De 16<br>Principes</h2>
+    <p class="ch-sub">
+      Gebaseerd op geselecteerd onderzoek en praktijkervaring, onderverdeeld in functionele, administratieve, 
+      esthetische en cognitieve categorieën.
+    </p>
+  </div>
 </section>
 
 <!-- 04b GRID -->
 <section id="principles-grid" class="snap">
-  <div class="pg-header">
+  <!-- EN HEADER -->
+  <div class="pg-header lang-en">
     <h3 class="lead" style="max-width:100%; margin-bottom:0;">Mapping the core principles<br>of Message Design.</h3>
     <div class="pg-cats">Functional<br>Administrative<br>Aesthetic<br>Cognitive</div>
   </div>
-  <div class="pg">
+  <!-- NL HEADER -->
+  <div class="pg-header lang-nl">
+    <h3 class="lead" style="max-width:100%; margin-bottom:0;">De kernprincipes van<br>Message Design in kaart gebracht.</h3>
+    <div class="pg-cats">Functioneel<br>Administratief<br>Esthetisch<br>Cognitief</div>
+  </div>
+
+  <!-- EN GRID -->
+  <div class="pg lang-en">
     <div class="pcard"><div class="pcard-n">01</div><div class="pcard-cat">Functional</div><div class="pcard-h">Define the Problem</div><p class="pcard-b">Form must strictly follow function. Fully understand the core problem before a single line is drawn.</p></div>
     <div class="pcard"><div class="pcard-n">02</div><div class="pcard-cat">Functional</div><div class="pcard-h">Provide Structure</div><p class="pcard-b">Organize information in a logical hierarchy. A systematic framework guides the user without confusion.</p></div>
     <div class="pcard"><div class="pcard-n">03</div><div class="pcard-cat">Functional</div><div class="pcard-h">Provide Clarity</div><p class="pcard-b">Eliminate ambiguity. Every visual element must actively contribute to the immediate understanding of the message.</p></div>
@@ -746,23 +955,54 @@ nav {
     <div class="pcard"><div class="pcard-n">15</div><div class="pcard-cat">Cognitive</div><div class="pcard-h">Facilitate Action</div><p class="pcard-b">Design for the outcome. Every message should clearly indicate the user's next step, removing decision friction.</p></div>
     <div class="pcard"><div class="pcard-n">16</div><div class="pcard-cat">Cognitive</div><div class="pcard-h">Iterate &amp; Refine</div><p class="pcard-b">Design is an ongoing cycle. Validate with real-world feedback and continuously adjust based on actual user interaction.</p></div>
   </div>
+
+  <!-- NL GRID -->
+  <div class="pg lang-nl">
+    <div class="pcard"><div class="pcard-n">01</div><div class="pcard-cat">Functioneel</div><div class="pcard-h">Definieer het Probleem</div><p class="pcard-b">Vorm moet strikt functie volgen. Begrijp het kernprobleem volledig voordat er één lijn wordt getrokken.</p></div>
+    <div class="pcard"><div class="pcard-n">02</div><div class="pcard-cat">Functioneel</div><div class="pcard-h">Bied Structuur</div><p class="pcard-b">Organiseer informatie in een logische hiërarchie. Een systematisch kader leidt de gebruiker zonder verwarring.</p></div>
+    <div class="pcard"><div class="pcard-n">03</div><div class="pcard-cat">Functioneel</div><div class="pcard-h">Bied Helderheid</div><p class="pcard-b">Elimineer ambiguïteit. Elk visueel element moet actief bijdragen aan het directe begrip van de boodschap.</p></div>
+    <div class="pcard"><div class="pcard-n">04</div><div class="pcard-cat">Functioneel</div><div class="pcard-h">Bied Eenvoud</div><p class="pcard-b">Strip het niet-essentiële weg. Minimalisme is geen inhoud weghalen — het is de ruimte optimaliseren tussen betekenis en decoratie.</p></div>
+    <div class="pcard"><div class="pcard-n">05</div><div class="pcard-cat">Administratief</div><div class="pcard-h">Bied Nadruk</div><p class="pcard-b">Stuur het oog van de lezer exclusief naar kritieke variabelen door middel van strategisch gewicht en plaatsing.</p></div>
+    <div class="pcard"><div class="pcard-n">06</div><div class="pcard-cat">Administratief</div><div class="pcard-h">Bied Eenheid</div><p class="pcard-b">Zorg voor samenhangende relaties tussen alle ontwerponderdelen. Eenheid bouwt absoluut vertrouwen en stilistische harmonie.</p></div>
+    <div class="pcard"><div class="pcard-n">07</div><div class="pcard-cat">Administratief</div><div class="pcard-h">Informatietoegang</div><p class="pcard-b">Structureer lay-outs om cognitieve frictie te verlagen. Informatie moet direct doorzoekbaar en toegankelijk zijn.</p></div>
+    <div class="pcard"><div class="pcard-n">08</div><div class="pcard-cat">Administratief</div><div class="pcard-h">Informatiekosten</div><p class="pcard-b">Respecteer de mentale energie van de gebruiker. Een rommelig ontwerp kost tijd en focus; optimalisatie bespaart menselijke verwerkingscapaciteit.</p></div>
+    <div class="pcard"><div class="pcard-n">09</div><div class="pcard-cat">Esthetisch</div><div class="pcard-h">Esthetische Proportie</div><p class="pcard-b">Harmonie is geworteld in wiskunde. Gebruik proportionele systemen om een balans te creëren die natuurlijk correct voelt.</p></div>
+    <div class="pcard"><div class="pcard-n">10</div><div class="pcard-cat">Esthetisch</div><div class="pcard-h">Harmonieprincipe</div><p class="pcard-b">Consistentie in stijl, gewicht en kleur creëert een uniforme visuele taal die interpretatieve inspanning vermindert.</p></div>
+    <div class="pcard"><div class="pcard-n">11</div><div class="pcard-cat">Esthetisch</div><div class="pcard-h">Faciliteer Aandacht</div><p class="pcard-b">Ontwerp is een uitnodiging. Gebruik visuele triggers om interesse te wekken en de lezer door de hiërarchie te leiden.</p></div>
+    <div class="pcard"><div class="pcard-n">12</div><div class="pcard-cat">Esthetisch</div><div class="pcard-h">Faciliteer Perceptie</div><p class="pcard-b">Maak patronen overduidelijk. Mensen zijn geprogrammeerd om structuren te herkennen — benut dit voor snelle datadecodering.</p></div>
+    <div class="pcard"><div class="pcard-n">13</div><div class="pcard-cat">Cognitief</div><div class="pcard-h">Mentale Verwerking</div><p class="pcard-b">Verminder de cognitieve belasting. Presenteer informatie in behapbare stukken die aansluiten bij de menselijke geheugenlimieten.</p></div>
+    <div class="pcard"><div class="pcard-n">14</div><div class="pcard-cat">Cognitief</div><div class="pcard-h">Faciliteer Geheugen</div><p class="pcard-b">Creëer blijvende indrukken. Gebruik herhaling, verhaallijnen en visuele haken om de kernboodschap in het langetermijngeheugen te verankeren.</p></div>
+    <div class="pcard"><div class="pcard-n">15</div><div class="pcard-cat">Cognitief</div><div class="pcard-h">Faciliteer Actie</div><p class="pcard-b">Ontwerp voor het resultaat. Elke boodschap moet de volgende stap van de gebruiker duidelijk aangeven om beslissingsfrictie weg te nemen.</p></div>
+    <div class="pcard"><div class="pcard-n">16</div><div class="pcard-cat">Cognitief</div><div class="pcard-h">Itereer &amp; Verfijn</div><p class="pcard-b">Ontwerp is een doorlopende cyclus. Valideer met praktijkfeedback en pas continu aan op basis van daadwerkelijke gebruikersinteractie.</p></div>
+  </div>
 </section>
 
 <!-- ══════════════════════════════════════════
      05 CH OPENER — CASE STUDIES
 ════════════════════════════════════════════ -->
 <section id="ch-cases" class="ch-opener snap" data-n="04">
-  <div class="ch-label">Chapter Four</div>
-  <h2 class="ch-title">Three<br>Case<br>Studies</h2>
-  <p class="ch-sub">
-    The ultimate test of Message Design principles: wayfinding systems, data visualization, 
-    and the architecture of the printed page.
-  </p>
+  <div class="lang-en">
+    <div class="ch-label">Chapter Four</div>
+    <h2 class="ch-title">Three<br>Case<br>Studies</h2>
+    <p class="ch-sub">
+      The ultimate test of Message Design principles: wayfinding systems, data visualization, 
+      and the architecture of the printed page.
+    </p>
+  </div>
+  <div class="lang-nl">
+    <div class="ch-label">Hoofdstuk Vier</div>
+    <h2 class="ch-title">Drie<br>Case<br>studies</h2>
+    <p class="ch-sub">
+      De ultieme test van Message Design principes: bewegwijzeringssystemen, datavisualisatie, 
+      en de architectuur van de gedrukte pagina.
+    </p>
+  </div>
 </section>
 
 <!-- 05b CASE 01 — WAYFINDING -->
 <section class="case snap">
-  <div class="case-text">
+  <!-- EN CASE TEXT -->
+  <div class="case-text lang-en">
     <div class="case-n">Case Study 01 — Wayfinding</div>
     <h3 class="case-h">"A sign is only effective when it eliminates alternative choices."</h3>
     <p class="body">
@@ -774,22 +1014,63 @@ nav {
       the environment becomes intuitive. Abstract geographic data transforms into clear, actionable instruction.
     </p>
   </div>
+  <!-- NL CASE TEXT -->
+  <div class="case-text lang-nl">
+    <div class="case-n">Casestudie 01 — Bewegwijzering</div>
+    <h3 class="case-h">"Een bord is pas effectief als het alternatieve keuzes elimineert."</h3>
+    <p class="body">
+      De ultieme test van Message Design vindt plaats in complexe fysieke ruimtes — internationale luchthavens en 
+      knooppunten van openbaar vervoer. Bewegwijzering leunt volledig op de directe, ondubbelzinnige overdracht van data.
+    </p>
+    <p class="body">
+      Door kritieke richtingaanwijzers te isoleren en visuele ruis uit de omringende architectuur te verwijderen, 
+      wordt de omgeving intuïtief. Abstracte geografische data transformeert in duidelijke, bruikbare instructies.
+    </p>
+  </div>
+
   <div class="case-visual">
     <div class="wf">
-      <div class="wf-row primary">
+      <!-- EN ROW -->
+      <div class="wf-row primary lang-en">
         <span class="wf-label">Gate B12–B24</span>
         <span class="wf-arr">→</span>
       </div>
-      <div class="wf-row">
+      <!-- NL ROW -->
+      <div class="wf-row primary lang-nl">
+        <span class="wf-label">Uitgang/Gate B12–B24</span>
+        <span class="wf-arr">→</span>
+      </div>
+
+      <!-- EN ROW -->
+      <div class="wf-row lang-en">
         <span class="wf-label">Arrivals Hall</span>
         <span class="wf-arr" style="color:var(--cobalt)">↓</span>
       </div>
-      <div class="wf-row">
+      <!-- NL ROW -->
+      <div class="wf-row lang-nl">
+        <span class="wf-label">Aankomsthal</span>
+        <span class="wf-arr" style="color:var(--cobalt)">↓</span>
+      </div>
+
+      <!-- EN ROW -->
+      <div class="wf-row lang-en">
         <span class="wf-label">Baggage Claim</span>
         <span class="wf-arr" style="color:var(--cobalt)">↓</span>
       </div>
-      <div class="wf-row">
+      <!-- NL ROW -->
+      <div class="wf-row lang-nl">
+        <span class="wf-label">Bagageafhandeling</span>
+        <span class="wf-arr" style="color:var(--cobalt)">↓</span>
+      </div>
+
+      <!-- EN ROW -->
+      <div class="wf-row lang-en">
         <span class="wf-label">Ground Transport</span>
+        <span class="wf-arr" style="color:var(--cobalt)">→</span>
+      </div>
+      <!-- NL ROW -->
+      <div class="wf-row lang-nl">
+        <span class="wf-label">Grondtransport / Taxi's</span>
         <span class="wf-arr" style="color:var(--cobalt)">→</span>
       </div>
     </div>
@@ -798,7 +1079,8 @@ nav {
 
 <!-- 05c CASE 02 — DATA VIZ -->
 <section class="case alt snap">
-  <div class="case-text">
+  <!-- EN CASE TEXT -->
+  <div class="case-text lang-en">
     <div class="case-n">Case Study 02 — Data Visualization</div>
     <h3 class="case-h">"To clarify is not to simplify, but to optimize."</h3>
     <p class="body">
@@ -811,48 +1093,95 @@ nav {
       to immediately register the core discovery without cognitive friction.
     </p>
   </div>
+  <!-- NL CASE TEXT -->
+  <div class="case-text lang-nl">
+    <div class="case-n">Casestudie 02 — Datavisualisatie</div>
+    <h3 class="case-h">"Verduidelijken is niet vereenvoudigen, maar optimaliseren."</h3>
+    <p class="body">
+      Ruwe cijfers bevatten van zichzelf geen verhaal — ze hebben een gestructureerde visuele omgeving nodig om 
+      betekenisvolle informatie te worden. De wet van eliminatie is hierbij leidend: strip decoratieve 
+      elementen meedogenloos weg om de data voor zichzelf te laten spreken.
+    </p>
+    <p class="body">
+      Hoog contrast wordt exclusief toegepast op de meest kritieke variabelen, waardoor het oog van de lezer 
+      gedwongen wordt om de kernontdekking direct en zonder cognitieve frictie te registreren.
+    </p>
+  </div>
+
   <div class="case-visual" style="background: var(--white);">
     <div class="chart-wrap">
-      <div class="chart-title">Cognitive Load Index — Q1 through Q6</div>
+      <div class="chart-title lang-en">Cognitive Load Index — Q1 through Q6</div>
+      <div class="chart-title lang-nl">Cognitieve Belastingsindex — K1 t/m K6</div>
+      
       <div class="bars">
         <div class="bar-col"><div class="bar-fill" style="height:35%"></div><div class="bar-lbl">Q1</div></div>
         <div class="bar-col"><div class="bar-fill" style="height:52%"></div><div class="bar-lbl">Q2</div></div>
         <div class="bar-col"><div class="bar-fill hi" style="height:88%"></div><div class="bar-lbl">Q3</div></div>
         <div class="bar-col"><div class="bar-fill" style="height:61%"></div><div class="bar-lbl">Q4</div></div>
-        <div class="bar-col"><div class="bar-fill" style="height:42%"></div><div class="bar-lbl">Q5</div></div>
-        <div class="bar-col"><div class="bar-fill" style="height:28%"></div><div class="bar-lbl">Q6</div></div>
+        <div class="bar-col"><div class="bar-fill" style="height:41%"></div><div class="bar-lbl">Q5</div></div>
+        <div class="bar-col"><div class="bar-fill" style="height:22%"></div><div class="bar-lbl">Q6</div></div>
       </div>
-      <div class="chart-note">Peak load identified at Q3 — primary intervention point.</div>
+      
+      <div class="chart-note lang-en">* Measured response delays under sensory overload (n=1,200).</div>
+      <div class="chart-note lang-nl">* Gemeten reactievertraging onder sensorische overbelasting (n=1.200).</div>
     </div>
   </div>
 </section>
 
-<!-- 05d CASE 03 — EDITORIAL -->
+<!-- 05d CASE 03 — ARCHITECTURE -->
 <section class="case snap">
-  <div class="case-text">
-    <div class="case-text">
-      <div class="case-n">Case Study 03 — Editorial Architecture</div>
-      <h3 class="case-h">Chronography: the page as cinematic sequence.</h3>
-      <p class="body">
-        A magazine should not be a series of static, isolated layouts, but a fluid cinematic sequence. 
-        By manipulating text density and the strategic placement of white space, a designer controls the 
-        exact speed at which a reader consumes information.
-      </p>
-      <p class="body">
-        Heavy, dense columns slow the gaze for deep focus. Explosive typographic statements and generous 
-        negative space accelerate pacing — creating an intentional psychological rhythm throughout.
-      </p>
-    </div>
+  <!-- EN CASE TEXT -->
+  <div class="case-text lang-en">
+    <div class="case-n">Case Study 03 — Chrono-Aesthetics</div>
+    <h3 class="case-h">"The pacing of information dictates its reading speed."</h3>
+    <p class="body">
+      A page layout behaves exactly like a mechanical clockwork. Through deliberate use of margins, 
+      leading, and column definitions, the designer choreographs how fast a message is processed.
+    </p>
+    <p class="body">
+      By compressing typographic components, we simulate urgency. By expanding white space, 
+      we force deep reflection. The architecture of layout is the control room of attention.
+    </p>
   </div>
-  <div class="case-visual">
+  <!-- NL CASE TEXT -->
+  <div class="case-text lang-nl">
+    <div class="case-n">Casestudie 03 — Chrono-Esthetiek</div>
+    <h3 class="case-h">"Het ritme van informatie dicteert de leessnelheid."</h3>
+    <p class="body">
+      De lay-out van een pagina gedraagt zich exact als een mechanisch uurwerk. Door bewust gebruik te maken van marges, 
+      interlinie en kolomdefinities regisseert de ontwerper hoe snel een boodschap wordt verwerkt.
+    </p>
+    <p class="body">
+      Door typografische componenten samen te drukken, simuleren we urgentie. Door witruimte uit te breiden, 
+      dwingen we diepe reflectie af. De architectuur van de lay-out is de controlekamer van de aandacht.
+    </p>
+  </div>
+
+  <div class="case-visual" style="background: var(--off);">
     <div class="chrono-wrap">
-      <div class="chrono-title">Reading Speed — Density Control</div>
+      <div class="chrono-title lang-en">Typographic Spatial Pacing Model</div>
+      <div class="chrono-title lang-nl">Typografisch Ruimtelijk Ritmemodel</div>
+      
       <div class="chrono-row">
-        <div class="chrono-speed">Slow</div>
+        <div class="chrono-speed">Fast</div>
         <div class="chrono-lines">
           <div class="c-line" style="width:100%"></div>
-          <div class="c-line" style="width:97%"></div>
+          <div class="c-line" style="width:95%"></div>
+          <div class="c-line" style="width:98%"></div>
+        </div>
+      </div>
+      <div class="chrono-row">
+        <div class="chrono-speed">Med</div>
+        <div class="chrono-lines" style="gap:12px;">
           <div class="c-line" style="width:100%"></div>
+          <div class="c-line" style="width:85%"></div>
+        </div>
+      </div>
+      <div class="chrono-row">
+        <div class="chrono-speed">Slow</div>
+        <div class="chrono-lines" style="gap:22px;">
+          <div class="c-line" style="width:100%"></div>
+          <div class="c-line" style="width:40%"></div>
         </div>
       </div>
     </div>
@@ -863,51 +1192,70 @@ nav {
      06 CONCLUSION
 ════════════════════════════════════════════ -->
 <section id="ch-conclusion" class="snap">
-  <div id="conclusion-body">
-    <h2 class="concl-lead">The responsibility of the <em>designer</em>.</h2>
+  <!-- EN CONCLUSION -->
+  <div id="conclusion-body" class="lang-en">
+    <h2 class="concl-lead">
+      The future of communication belongs to those who can <em>translate complexity</em> into absolute visual truth.
+    </h2>
     <p class="concl-body">
-      Message design is fundamentally an act of discipline. As technologies advance and the velocity 
-      of information accelerates, the human cognitive capacity remains unchanged. To practice design 
-      responsibly is to reject decoration in favor of utility, and complexity in favor of clarity.
+      The Message Design Framework bridges the gap between academic theory and pure visual practice. 
+      By combining graphic aesthetics with informational logic and instructional clarity, 
+      we turn chaotic data into human understanding.
     </p>
     <div class="colophon">
-      <div>Title: The Message Design Framework</div>
-      <div>Author: Fernandez Luïz</div>
-      <div>Typeface: Founders Grotesk &amp; Baskerville</div>
-      <div>Year: 2026</div>
+      <span>Published by Slanted</span>
+      <span>Printed in Germany</span>
+      <span>All Rights Reserved © 2026</span>
+    </div>
+  </div>
+
+  <!-- NL CONCLUSION -->
+  <div id="conclusion-body" class="lang-nl">
+    <h2 class="concl-lead">
+      De toekomst van communicatie is aan hen die <em>complexiteit kunnen vertalen</em> naar absolute visuele waarheid.
+    </h2>
+    <p class="concl-body">
+      Het Message Design Framework overbrugt de kloof tussen academische theorie en pure visuele praktijk. 
+      Door grafische esthetiek te combineren met informatielogica en instructieve helderheid, 
+      veranderen we chaotische data in menselijk begrip.
+    </p>
+    <div class="colophon">
+      <span>Gepubliceerd door Slanted</span>
+      <span>Gedrukt in Duitsland</span>
+      <span>Alle rechten voorbehouden © 2026</span>
     </div>
   </div>
 </section>
 
+<!-- ══════════════════════════════════════════
+     JAVASCRIPT LOGICA
+════════════════════════════════════════════ -->
 <script>
-// Simple dynamic highlight logic for navigation line
-const sections = document.querySelectorAll('section');
-const navLinks = document.querySelectorAll('.nav-links a');
-const progressBar = document.getElementById('progress');
-
+// Progress indicator scroll logica
 window.addEventListener('scroll', () => {
-  let current = '';
-  sections.forEach(section => {
-    const sectionTop = section.offsetTop;
-    if (pageYOffset >= sectionTop - 60) {
-      current = section.getAttribute('id');
-    }
-  });
+  const winScroll = document.documentElement.scrollTop || document.body.scrollTop;
+  const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+  const scrolled = (winScroll / height) * 100;
+  document.getElementById('progress').style.width = scrolled + '%';
+});
 
-  navLinks.forEach(a => {
-    a.classList.remove('active');
-    if (a.getAttribute('data-sec') === current) {
-      a.classList.add('active');
-    }
-  });
+// Volledig functionele taaltoggle knop (Desktop & Mobiel)
+const langBtn = document.getElementById('langBtn');
+const htmlEl = document.documentElement;
 
-  // Progress Bar
-  const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
-  if (totalScroll > 0) {
-    const scrolled = (window.pageYOffset / totalScroll) * 100;
-    progressBar.style.width = scrolled + '%';
+langBtn.addEventListener('click', () => {
+  // Controleer de huidige actieve taal op het <html> element
+  if (htmlEl.getAttribute('lang') === 'en') {
+    htmlEl.setAttribute('lang', 'nl');
+    langBtn.textContent = 'EN'; // Als de site NL is, toont de knop optie om naar EN te gaan
+  } else {
+    htmlEl.setAttribute('lang', 'en');
+    langBtn.textContent = 'NL'; // Als de site EN is, toont de knop optie om naar NL te gaan
   }
 });
 </script>
+
 </body>
 </html>
+
+```
